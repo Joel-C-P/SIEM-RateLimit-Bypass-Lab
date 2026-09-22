@@ -1,0 +1,45 @@
+# ===== Secretos =====
+.env
+.env.*
+!.env.example
+configuration.yml
+**/configuration.yml
+**/users_database.yml
+*.pem
+*.key
+*.p12
+secrets/
+
+# ===== Authelia =====
+authelia.log
+**/authelia.log
+**/db.sqlite3
+**/*.sqlite3
+**/notification.txt
+logs/authelia/
+
+# ===== Docker =====
+docker-compose.override.yml
+
+# ===== Python =====
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+.pytest_cache/
+
+# ===== Logs y datos =====
+*.log
+logs/*
+!logs/.gitkeep
+data/
+*.db
+
+# ===== IDE / OS =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ===== Screenshots privados =====
+screenshots/private/
