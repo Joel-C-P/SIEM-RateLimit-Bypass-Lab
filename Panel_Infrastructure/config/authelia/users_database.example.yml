@@ -1,0 +1,9 @@
+#Example file for the Authelia users database.
+#Rename it to users_database.yml and replace the example hash.
+#Generate the hash with: docker run --rm authelia/authelia:latest authelia hash-password 'YourPassword'
+
+users:
+  admin:
+    displayname: "Admin"
+    password: "REPLACE_WITH_ARGON2_HASH"
+    email: admin@example.local

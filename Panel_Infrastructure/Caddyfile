@@ -1,0 +1,4 @@
+authelia.test {
+    tls internal
+    reverse_proxy authelia:9091
+}

@@ -1,0 +1,55 @@
+# Authelia -Example configuration
+# Copy to configuration.yml and fill in the values.
+# Remember generate secrets with: openssl rand -hex 32
+
+server:
+  address: 'tcp://0.0.0.0:9091/'
+
+log:
+  level: info
+  format: json
+  file_path: /config/authelia.log
+
+theme: dark
+
+identity_validation:
+  reset_password:
+    jwt_secret: 'REPLACE_WITH_OPENSSL_RAND_HEX_32'
+
+totp:
+  issuer: laboratorio.local
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+
+access_control:
+  default_policy: deny
+  rules:
+    - domain: 'authelia.test'
+      policy: one_factor
+      subject: 'user:admin'
+
+session:
+  name: authelia_session
+  secret: 'REPLACE_WITH_OPENSSL_RAND_HEX_32'
+  expiration: 1h
+  inactivity: 5m
+  cookies:
+    - domain: 'authelia.test'
+      authelia_url: 'https://authelia.test'
+
+regulation:
+  max_retries: 3
+  find_time: 60
+  ban_time: 60
+
+storage:
+  encryption_key: 'REPLACE_WITH_OPENSSL_RAND_HEX_32'
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  disable_startup_check: true
+  filesystem:
+    filename: /config/notification.txt
