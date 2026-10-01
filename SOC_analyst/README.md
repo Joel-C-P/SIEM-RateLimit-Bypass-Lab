@@ -10,6 +10,8 @@ Before looking for events, I made some login requests using other IPs. 172.16.0.
 
 My objective is to detect and analyze suspicious authentication activity, and to document a reproducible response with evidence.
 
+## Telemetry
+
 So as I said before, we need to be organized, so I will start by looking at the telemetry that we get.
 
 ![Telemetry](Screenshots/splunk_telemetry.png)
@@ -23,9 +25,26 @@ index="management_panel" host=authelia | spath input=_raw path=remote_ip output=
 
 ![Organizated data](Screenshots/spl_filter.png)
 
+At this point I'm gonna filter by ip, users, and how many failure and successful
+
+```spl
+index="management_panel" host="authelia" | spath input=_raw path=msg output=lab_msg | spath input=_raw path=remote_ip output=lab_ip | regex lab_msg="^(Unsuccessful|Successful) 1FA authentication attempt" | rex field=lab_msg "by user '(?<lab_user>[^']+)'" | eval lab_action=case(match(lab_msg, "^Unsuccessful "), "failure", match(lab_msg, "^Successful "), "success") | stats count AS resultados by lab_ip lab_user lab_action | sort lab_ip lab_user lab_action
+```
+We can observe that something goes wrong... why is there many failure attempts of user admin, and also all this massive failure error come from one specific IP
+
+![Deep Filter](Screenshots/filter_user_and_ip.png)
+
+We got:
+
+| Users | Failure | Success |
+|-------|---------|---------|
+| rrhh  | 3       |   31    |
+| admin | 59      |   2     |
+
 
 ## Notes:
 
 I had problems with the interpreter time, it was desynchronized by seconds between Splunk and Authelia time logs. The solution was changing the time parameters of Splunk and restarting it.
+
 
 
