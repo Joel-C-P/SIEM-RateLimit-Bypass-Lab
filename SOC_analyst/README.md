@@ -59,6 +59,55 @@ During a block of 60sec I'll look for this coincidences
 
 This allows me to detect the behavior even if the attacker has not yet guessed the correct password. If a successful login does occur, we will check its timing relative to the failed attempts and determine whether the protected resource was subsequently accessed.
 
+So I filter this with the next SPL consult:
+
+```spl
+index="management_panel" host="authelia"
+| spath input=_raw path=remote_ip output=lab_ip
+| spath input=_raw path=msg output=lab_msg
+| regex lab_msg="^(Unsuccessful|Successful) 1FA authentication attempt"
+| rex field=lab_msg "by user '(?<lab_user>[^']+)'"
+| eval lab_action=case(
+    match(lab_msg, "^Unsuccessful"), "failure",
+    match(lab_msg, "^Successful"), "success"
+  )
+| bin _time span=1m
+| stats
+    count(eval(lab_action="failure")) AS failures
+    count(eval(lab_action="success")) AS success
+    BY _time lab_ip lab_user
+| eval valid_acount=if(success>=3, lab_user, null())
+| eventstats values(valid_acount) AS valid_acounts BY _time lab_ip
+| where failures>=6
+| mvexpand valid_acounts
+| where lab_user!=valid_acounts
+| rename lab_user AS attacked_acount,
+         valid_acounts AS another_acount_success,
+         success AS success_attacked_acount
+| table _time lab_ip attacked_acount failures another_acount_success success_attacked_acount
+```
+
+| Instruction | Function |
+|-------------|----------|
+| `bin _time span=1m` | Groups times into one-minute blocks. |
+| `stats ... BY _time lab_ip lab_user` | Counts failures and successes per minute, IP, and account. |
+| `eval valid_acount=if(...)` | Marks accounts with at least three successes. |
+| `eventstats values(...)` | Adds those accounts to rows of the same minute and IP, preserving each user's counts. |
+| `where failures>=6` | Keeps accounts with six or more failures. |
+| `mvexpand valid_acounts` | Creates one row per candidate account with successes. |
+| `where lab_user!=valid_acounts` | Requires that the account with successes is different from the account with failures. |
+
+This filter its me firts detection consult, This filter use blocks of 1 minute, for exemple "13:01:00" before of "13:02:00". Still is not a real time move of 60 seconds
+
+So doing this we got the next capture:
+
+
+![Deep Filter](Screenshots/filter_detecction.png)
+
+The appearance of "rrhh" in that column indicates that at least three successes were achieved in that block. The "1" in the last column corresponds to the success in "admin".
+
+The query identified the attacker's IP address through 57 failed attempts against the "admin" account and repeated successful authentications for the "rrhh" account within the same minute. It also showed a successful login for "admin".
+
 ## Notes:
 
 I had problems with the interpreter time, it was desynchronized by seconds between Splunk and Authelia time logs. The solution was changing the time parameters of Splunk and restarting it.
