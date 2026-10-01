@@ -41,6 +41,23 @@ We got:
 | rrhh  | 3       |   31    |
 | admin | 59      |   2     |
 
+## Chronology
+
+At this point I'll review the autentications chronology by IP. I observe that there a intercalation between users acounts during the lab.
+My hypothesis is that one IP could be getting a lot of failures agains an acount and success access repeaded with another account showing an unusual pattern. Why? maybe to avoid the rate limit ban wheel guess random passwords.
+
+Atlist to me this could be a kind of "Possible force brute with interspersing valid autentications" I can't ignore this unusual bahavior
+
+During a block of 60sec I'll look for this coincidences
+
+| Condition | Initial Proposal |
+|-----------|------------------|
+| Origin | Same IP |
+| Failed attempts | At least 6 failures against the same account A |
+| Successful authentications | At least 3 successes with an account B different from A |
+| Time relationship | Both behaviors within the same window |
+
+This allows me to detect the behavior even if the attacker has not yet guessed the correct password. If a successful login does occur, we will check its timing relative to the failed attempts and determine whether the protected resource was subsequently accessed.
 
 ## Notes:
 
