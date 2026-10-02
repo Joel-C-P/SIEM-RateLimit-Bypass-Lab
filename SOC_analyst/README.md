@@ -108,6 +108,59 @@ The appearance of "rrhh" in that column indicates that at least three successes 
 
 The query identified the attacker's IP address through 57 failed attempts against the "admin" account and repeated successful authentications for the "rrhh" account within the same minute. It also showed a successful login for "admin".
 
+Now, at this point I need to calculate the 60sec move recounts.  
+
+changes on the filter:
+
+. remove bin _time span=1m : no longer split the attack by clock minutes.
+
+. stats ... BY _time lab_ip lab_user : groups events from the same account and IP that share a timestamp. Since this logs have second precision, I count together the events of that second, without inventing their order.
+
+sort 0 _time: sorts chronologically before computing.
+
+streamstats time_window=60s : adds up the counts from the last 60 seconds, including the current row and separating each combination of IP and account.
+
+```spl
+index="management_panel" host="authelia" 
+| spath input=_raw path=remote_ip output=lab_ip
+| spath input=_raw path=msg output=lab_msg
+|regex lab_msg="^(Unsuccessful|Successful) 1FA authentication attempt"
+| rex field=lab_msg "by user '(?<lab_user>[^']+)'"
+| eval lab_action=case(
+match(lab_msg, "^Unsuccessful"), "failure",
+match(lab_msg, "^Successful"), "Success"
+)
+| stats 
+   count(eval(lab_action="failure")) AS failures_second 
+   count(eval(lab_action="success")) AS success_second
+   BY _time lab_ip lab_user
+| sort 0 _time
+| streamstats time_window=60s
+    sum(failures_second) AS failures_60s
+    sum(success_second) AS successes_60s
+    BY lab_ip lab_user 
+| table _time lab_ip lab_user failures_second success_second failures_60s successes_60s
+```
+
+This query is an intermediate check: it does not yet relate the failures of one account to the successes of another. First we check these counters, then we will complete that relationship within the same window.
+
+In the previous rows, successes_60s of admin is worth 0 because its successful authentication had not yet been registered. At 09:01:43 it goes to 1. In addition, the counters are separated by IP and account: the 28 HR hits from the attacking IP appear in their own ranks, they do not add to the admin successes.
+
+
+![Filter pattern](Screenshots/filter_pattern.png)
+
+The query identified the activity of 172.28.0.1:
+
+- 57 failures against admin.
+
+- 28 successes with rrhh.
+
+- 1 success with admin.
+
+The first match appeared at 09:01:20, before the admin success registered at 09:01:43, according to the time shown in Splunk.
+
+
+
 ## Notes:
 
 I had problems with the interpreter time, it was desynchronized by seconds between Splunk and Authelia time logs. The solution was changing the time parameters of Splunk and restarting it.
