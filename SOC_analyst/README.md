@@ -159,6 +159,52 @@ The query identified the activity of 172.28.0.1:
 
 The first match appeared at 09:01:20, before the admin success registered at 09:01:43, according to the time shown in Splunk.
 
+## Current detection and validation status
+
+The current query implements a lab-specific detection for failed 
+authentications against `admin` combined with successful authentications
+as `rrhh` from the same source IP within a rolling 60-second window.
+
+The detection requires at least six failures against `admin` and three
+successes as `rrhh`. A successful authentication as `admin` is additional
+context, not a requirement for a match. These results support investigation of suspicious authentication
+activity.
+
+
+
+![Filter move window](Screenshots/filter_move_window.png)
+
+The case simulates 8 "admin" failures and 4 "hhrr" successes in 20 seconds, divided over two minutes:
+
+
+| Block | Failure admin | Success rrhh |
+|-------|---------|---------|
+| Final firts minute  | 4       | 2 |
+| Start of the second minute |   4     | 2 |
+
+
+This confirms that the mobile calculation works even when events move from one minute to the next.
+
+Now it's time to test the same detection with the real Autelia logs.
+
+
+
+
+![Filtering in real logs](Screenshots/filtering_attack.png)
+
+The detection has found the pattern in the actual logs. The IP is 172.28.0.1, and the counters go up to 57 admin failures, 28 HR successes and 1 admin success within the mobile window. The first row already meets the thresholds, with 8 failures and 4 successes. It does not mean that the attack started right there: where hides the previous rows that did not yet reach 6 and 3. The next thing is to verify the success of admin in the original event.
+
+
+Now at this point I'll gonna filter by the success of user admin with the IP "172.28.0.1" and so import to the time where this happend
+
+
+![Filter of suspicious access](Screenshots/filtering_success_attack.png)
+
+This completes the validation of the detection
+
+
+
+
 
 
 ## Notes:
