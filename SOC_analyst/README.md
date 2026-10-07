@@ -202,6 +202,9 @@ Now at this point I'll gonna filter by the success of user admin with the IP "17
 
 This completes the validation of the detection
 
+** Appendices
+
+- [Mapeo MITRE ATT&CK](MITRE_ATT&CK.md)
 
 
 
