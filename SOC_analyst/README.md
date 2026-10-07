@@ -204,7 +204,7 @@ This completes the validation of the detection
 
 ** Appendices
 
-- [Mapeo MITRE ATT&CK](MITRE_ATT&CK.md)
+- [MITRE ATT&CK](MITRE_ATT&CK.md)
 
 
 
