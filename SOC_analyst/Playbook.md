@@ -44,11 +44,9 @@ In Splunk:
 4. Review the chronological sequence of failures and successes.
 5. If there is an `example_admin` success, locate its original event.
 
-Do not add up the counters from all rows of the detection:
-the windows overlap and contain shared events.
+Do not add up the counters from all rows of the detection, the windows overlap and contain shared events.
 
-A successful first-factor authentication does not, by itself,
-prove access to the panel or subsequent activity.
+A successful first-factor authentication does not, by itself,prove access to the panel or subsequent activity.
 
 ## 5. Check the context
 
