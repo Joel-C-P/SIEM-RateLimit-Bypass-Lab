@@ -233,11 +233,32 @@ and throttling was disabled.
 ![Splunk alert test](Screenshots/alert_test.png)
 
 
+## Original event review
+
+The original Authelia events were reviewed in Splunk to verify the authentication results behind the alert that I create before.
+
+Between 10:24:04 and 10:24:11 on 2026-10-08, the reviewed events show six failed authentications for `admin` and three successful authentications for `rrhh`, all from `172.28.0.1`.
+This matches the detection thresholds within the 60sec window.
+
+Messages beginning with `Mark 1FA` were not treated as additional
+authentication successes or failures.
+
+![Authentication sequence](Screenshots/triage_authentication_sequence.png)
+
+A separate original event confirms a successful first-factor
+authentication for `admin` from the same IP at 14:24:40.
+
+
+![Admin authentication success](Screenshots/triage_admin_success.png)
+
+The evidence supports further investigation of possible compromise.
+Context checks and the escalation decision will be documented
+in the simulated Jira case.
+
 ** Appendices
 
 - [MITRE ATT&CK](MITRE_ATT&CK.md)
-
-
+- [Playbook.md](Playbook.md)
 
 
 
