@@ -202,6 +202,37 @@ Now at this point I'll gonna filter by the success of user admin with the IP "17
 
 This completes the validation of the detection
 
+## Alert configuration
+
+I'll use the splunk filter that I made before, it was the `FIltering in real logs`.
+
+The was the parameters settings: 
+
+| Setting | Value |
+|---|---|
+| Schedule | Every minute (`* * * * *`) |
+| Search time range | Last 5 minutes |
+| Trigger condition | Number of results greater than 0 |
+| Action | Add to Triggered Alerts |
+| Throttling | Disabled |
+
+
+![Splunk alert configuration](Screenshots/alert_configuration.png)
+
+
+So to prove this alert the "Pentester" will execute his attack again.
+
+What we got? The detection search returned results for source IP `172.28.0.1`.
+
+The alert was added to Triggered Alerts. No desktop pop-up was
+configured. The same activity appeared in multiple executions
+because the search ran every minute over a five-minute time range
+and throttling was disabled.
+
+
+![Splunk alert test](Screenshots/alert_test.png)
+
+
 ** Appendices
 
 - [MITRE ATT&CK](MITRE_ATT&CK.md)
