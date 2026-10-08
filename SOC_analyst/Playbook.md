@@ -107,19 +107,6 @@ In Jira, record:
 
 If an escalation is simulated without a real Tier 2,
 state it explicitly in the ticket.
-Upon receiving the alert:
-
-1. Check whether there is a ticket for the same activity.
-2. Create a Jira ticket if one does not exist.
-3. Record:
-   - Alert name and time received.
-   - Investigated interval and time zone.
-   - Source IP and accounts involved.
-   - Detection counters.
-   - Link or reference to the Splunk search.
-4. Mark the case as under investigation.
-
-Update the ticket during the analysis.
 
 ## Important rules
 
