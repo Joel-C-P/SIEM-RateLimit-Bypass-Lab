@@ -26,13 +26,13 @@ Upon receiving the alert:
 2. Create a Jira ticket if one does not exist.
 3. Record:
    - Alert name and time received.
-      - Investigated interval and time zone.
-         - Source IP and accounts involved.
-            - Detection counters.
-               - Link or reference to the Splunk search.
-               4. Mark the case as under investigation.
+   - Investigated interval and time zone.
+   - Source IP and accounts involved.
+   - Detection counters.
+   - Link or reference to the Splunk search.
+4. Mark the case as under investigation.
 
-               Update the ticket during the analysis.
+Update the ticket during the analysis.
 
 ## 4. Validate the evidence
 
@@ -57,11 +57,10 @@ prove access to the panel or subsequent activity.
 - Check whether the source is usual for the affected accounts.
 - Check whether there is an authorized test that matches
   the source, accounts, and time.
-  - Review nearby events to identify continuity
+- Review nearby events to identify continuity
     or additional affected accounts.
 
-    Private lab IPs are investigated using
-    the inventory and internal logs.
+Private lab IPs are investigated using the inventory and internal logs.
 
 ## 6. Decision and priority
 
