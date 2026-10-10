@@ -255,6 +255,25 @@ The evidence supports further investigation of possible compromise.
 Context checks and the escalation decision will be documented
 in the simulated Jira case.
 
+## Configuration
+
+- Alert action: Jira Cloud Issue Integration.
+- Project key: SOC.
+- Issue type: [System] Incident.
+- Search results included in the ticket description.
+- Trigger frequency: Once per qualifying search execution.
+- Throttle: 600 seconds.
+
+In my case, I will implement both, Jira and Splunk, but it will be *Jira Service Management Cloud*.
+
+I add a capture of how I put to work to getter, I add "Splunk Add-On for Jira Cloud" for make this possible.
+
+![Adding Jira with Splunk Alert](Screenshots/jira_setting.png)
+
+Then I made it the attack again, The alert got this pattern and so important, The incident arrived to Jira 
+
+![Jira automatic ticket creation](Screenshots/jira_ticket.png)
+
 ** Appendices
 
 - [MITRE ATT&CK](MITRE_ATT&CK.md)
@@ -264,7 +283,8 @@ in the simulated Jira case.
 
 ## Notes:
 
-I had problems with the interpreter time, it was desynchronized by seconds between Splunk and Authelia time logs. The solution was changing the time parameters of Splunk and restarting it.
+1. I had problems with the interpreter time, it was desynchronized by seconds between Splunk and Authelia time logs. The solution was changing the time parameters of Splunk and restarting it.
 
-
-
+2. In Jira configuration the first attempt failed because the configured issue type was Incident, while the project uses [System] Incident.
+Splunk internal logs identified this mismatch. After correcting
+the value, a subsequent test successfully created the ticket.
