@@ -274,11 +274,22 @@ Then I made it the attack again, The alert got this pattern and so important, Th
 
 ![Jira automatic ticket creation](Screenshots/jira_ticket.png)
 
+So at this point I started to take the task, I'm the user Tester:
+
+![Jira taking the task](Screenshots/jira_status.png)
+
+At the end I simulated an scalation ticket on jira 
+
+![Jira Scalation To Tier 2](Screenshots/ticket_scalation_tier2.png)
+
+
+
+
 ** Appendices
 
 - [MITRE ATT&CK](MITRE_ATT&CK.md)
-- [Playbook.md](Playbook.md)
-
+- [Playbook](Playbook.md)
+- [Incident report](SIEM-RateLimit-Bypass-Lab/docs/incident_report.md)
 
 
 ## Notes:
